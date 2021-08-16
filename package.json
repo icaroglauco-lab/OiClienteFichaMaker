@@ -12,7 +12,7 @@
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.11",
     "@tsconfig/svelte": "^2.0.1",
     "sass": "^1.37.5",
-    "svelte": "^3.37.0",
+    "svelte": "3.38.*",
     "svelte-check": "^2.1.0",
     "svelte-mui": "^0.3.3-7",
     "svelte-preprocess": "^4.7.2",
@@ -21,6 +21,7 @@
     "vite": "^2.4.4"
   },
   "dependencies": {
+    "svelte-input-mask": "^1.1.0",
     "yaml": "^1.10.2"
   }
 }

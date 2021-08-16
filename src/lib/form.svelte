@@ -1,144 +1,11 @@
 <script lang="ts">
+  import SendButton from './SendButton.svelte';
+
+  import FormFields from './FormFields.svelte';
+
   import YAML from 'yaml'
 
-  type TCampo = {
-    choice: Array<string|number> | string | {} | boolean
-    requerido?: boolean | true
-  }
-
-  var formStruct = {
-    "dados cliente": {
-      "CONSULTOR(A)" : <TCampo>{
-        choice: "", 
-      },
-      "SUPERVISOR(A)" : <TCampo>{
-        choice: "", 
-      },
-      "NOME" : <TCampo>{
-        choice: "", 
-      },
-      "CPF/CNPJ" : <TCampo>{
-        choice: "", 
-      },
-      "RG" : <TCampo>{
-        choice: "", 
-      },
-      "ÓRGÃO EMISSOR" : <TCampo>{
-        choice: "", 
-      },
-      "NATURALIDADE" : <TCampo>{
-        choice: "", 
-      },
-      "NASCIMENTO" : <TCampo>{
-        choice: "", 
-      },
-      "NOME DA MÃE" : <TCampo>{
-        choice: "", 
-      },
-      "ENDEREÇO" : <TCampo>{
-        choice: "", 
-      },
-      "NÚMERO" : <TCampo>{
-        choice: "", 
-      },
-      "NOME DO BLOCO DE PRÉDIO (SE APLICAR)": <TCampo>{
-        choice: "",
-        requerido: false
-      },
-      "NÚMERO DE APARTAMENTO (SE APLICAR)": <TCampo>{
-        choice: "",
-        requerido: false
-      },
-      "CEP" : <TCampo>{
-        choice: "", 
-      },
-      "CDOE" : <TCampo>{
-        choice: "", 
-      },
-      "BAIRRO" : <TCampo>{
-        choice: "", 
-      },
-      "PONTO REFERENCIA" : <TCampo>{
-        choice: "", 
-      },
-      "CIDADE" : <TCampo>{
-        choice: "", 
-      },
-      "E-MAIL" : <TCampo>{
-        choice: "", 
-      },
-      "WHATSAPP/DDD" : <TCampo>{
-        choice: "", 
-      },
-      "TELEFONE1/DDD" : <TCampo>{
-        choice: "", 
-      },
-      "TELEFONE2/DDD" : <TCampo>{
-        choice: "", 
-      },
-    },
-    "venda" : {
-      "VENDA NOVA" : <TCampo>{
-        choice: false, 
-      },
-      "PORTABILIDADE": <TCampo>{
-        choice: false,
-      }, 
-      "FIXO/OPERADORA DDD" : <TCampo>{
-        choice: "", 
-      },
-      "MIGRAÇÃO": <TCampo>{
-        choice: false
-      },
-      "OIFIXO DDD" : <TCampo>{
-        choice: "", 
-      },
-      "COBRANÇA EM DÉBITO " : <TCampo>{
-        choice: "", 
-      },
-      "BANCO" : <TCampo>{
-        choice: "", 
-      },
-      "AG" : <TCampo>{
-        choice: "", 
-      },
-      "OPERAÇÃO" : <TCampo>{
-        choice: "", 
-      },
-      "CONTA" : <TCampo>{
-        choice: "", 
-      },
-      "DIGITO" : <TCampo>{
-        choice: "", 
-      },
-      "PLANOS" : <TCampo>{
-        choice: "", 
-      },
-      "VALOR FINAL" : <TCampo>{
-        choice: "", 
-      },
-      "VENCIMENTO (DIA)" : <TCampo>{
-        choice: {2: false,  7: false, 11: false, 16: false, 20: false, 26: false},
-      },
-    },
-    "instalação" : {
-      "PREFERÊNCIA DIA  INSTALAÇÃO" : <TCampo>{
-        choice: "", 
-      },
-      "PERÍODO" : <TCampo>{
-        choice: {
-          "M": false, 
-          "T": false
-        }, 
-      },
-    },
-  }
-
-  // handle user input
-  const handleInput = (sessao:string, campo:string) => (e) => {
-    formStruct[sessao][campo].choice = e.target.value;
-    console.log(sessao, campo, e.target.value);
-  }
+  import {formStruct} from './construct';
 
   
   // digest form
@@ -178,52 +45,27 @@
   }
 
   $: digested = digest(formStruct);
-  $: console.log(digested);
 
-  // utilitários
-  const capitalize = function(s: string) :string{
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  }
+
 
 </script>
 
-<form action="">
+<div class="wrapper">
+  <form onsubmit="event.preventDefault();">
 
-{#each Object.keys(formStruct) as sessão}
-  <h3>{capitalize(sessão)}</h3>
-  {#each Object.keys(formStruct[sessão]) as campo}
-    
-    <label for={campo}>{campo}: </label>
+    <FormFields struct={formStruct}></FormFields>
 
-    {#if typeof formStruct[sessão][campo].choice === 'object'}
-      {#each Object.keys(formStruct[sessão][campo].choice) as opt}
-        <label for="{campo}">{opt}</label>
-        <input type="checkbox" bind:checked={formStruct[sessão][campo].choice[opt]}/>
-        <br/>
-      {/each}
+    <SendButton digested={digested}></SendButton>
 
-    {:else}
-        {#if typeof formStruct[sessão][campo].choice === 'boolean' }
-          <input type="checkbox" bind:checked={formStruct[sessão][campo].choice}/>
-        {/if}
-
-        {#if typeof formStruct[sessão][campo].choice === 'string'}
-          <input type="text" bind:value={formStruct[sessão][campo].choice}/>
-        {/if}
-    {/if}
-
-    <br/>
-  {/each}
-  <hr/>
-{/each}
-
-<a href="whatsapp://send?text={digested}" data-action="share/whatsapp/share">
-  Enviar para Whatsapp
-</a>
-
-
-</form>
+  </form>
+</div>
 
 
 <style lang="sass">
+  form
+    display: flex
+    flex-direction: column
+    grid-gap: 20px
+    min-height: 100vh
+    padding-bottom: 12vh
 </style>
